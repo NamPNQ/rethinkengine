@@ -1,42 +1,30 @@
-from rethinkengine.base import (BaseDocument, BaseDict, BaseList, ALLOW_INHERITANCE, get_document)
-from rethinkengine.errors import ValidationError
-from rethinkengine.connection import DEFAULT_CONNECTION_NAME
 from rethinkengine import signals
-
-__all__ = ['Document', 'EmbeddedDocument', 'DynamicDocument',
-           'DynamicEmbeddedDocument', 'OperationError',
-           'InvalidCollectionError', 'NotUniqueError', 'MapReduceDocument']
+from .fields import *
+from .metaclasses import DocumentMetaclass
 
 
-class InvalidCollectionError(Exception):
-    pass
 
+class Document(object):
+    _fields = {}
+    _changed_fields = {}
 
-class Document(BaseDocument):
-    def pk(self):
-        """Primary key alias
-        """
-        def fget(self):
-            return getattr(self, self._meta['id_field'])
+    my_metaclass = DocumentMetaclass
+    __metaclass__ = DocumentMetaclass
 
-        def fset(self, value):
-            return setattr(self, self._meta['id_field'], value)
-        return property(fget, fset)
-    pk = pk()
+    def __init__(self, **kwargs):
+        self._pk = kwargs.get('pk') or 'id'
 
+        for k in kwargs:
+            if hasattr(self, k) and not kwargs[k].startswith('_'):
+                self._fields[k] = kwargs[k]
 
-    def save(self, force_insert=False, validate=True, clean=True,
-         write_concern=None,  cascade=None, cascade_kwargs=None,
-         _refs=None, save_condition=None, **kwargs):
+    def __setattr__(self, key, value):
+        if hasattr(self, key) and not key.startswith('_'):
+            print key, value
 
-        signals.pre_save.send(self.__class__, document=self)
+    def __getattr__(self, item):
+        print 'getitem', item
 
-        if validate:
-            self.validate(clean=clean)
-
-        if write_concern is None:
-            write_concern = {"w": 1}
-
-        doc = self.to_mongo()
-
-        created = ('id' not in doc or self._created or force_insert)
+    @classmethod
+    def __get__(cls, item):
+        print '__get__', item

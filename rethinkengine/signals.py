@@ -37,12 +37,12 @@ except ImportError:
 # not put signals in here.  Create your own namespace instead.
 _signals = Namespace()
 
-pre_init = _signals.signal('pre_init')
-post_init = _signals.signal('post_init')
 pre_save = _signals.signal('pre_save')
-pre_save_post_validation = _signals.signal('pre_save_post_validation')
-post_save = _signals.signal('post_save')
 pre_delete = _signals.signal('pre_delete')
+pre_validate = _signals.signal('pre_validate')
+
+post_init = _signals.signal('post_init')
+post_retrieve = _signals.signal('post_retrieve')
+post_save = _signals.signal('post_save')
 post_delete = _signals.signal('post_delete')
-pre_bulk_insert = _signals.signal('pre_bulk_insert')
-post_bulk_insert = _signals.signal('post_bulk_insert')
+post_validate = _signals.signal('post_validate')

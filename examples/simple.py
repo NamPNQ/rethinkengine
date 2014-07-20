@@ -3,9 +3,14 @@ import os
 
 sys.path.append(os.path.abspath('..'))
 
-from rethinkengine.document import Do
+from rethinkengine.document import Document
+from rethinkengine.fields import *
 
-class BlogPost(Document):
-    title = StringField(required=True, max_length=200)
-    posted = DateTimeField(default=datetime.datetime.now)
-    tags = ListField(StringField(max_length=50))
+
+class User(Document):
+    username = StringField()
+    password = StringField()
+
+
+user = User(username='root', password='s3cret')
+print user, user.username
